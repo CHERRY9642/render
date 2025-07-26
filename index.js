@@ -8,21 +8,35 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-let latestSensorData = {}; // store the latest data
+let latestSensorData = {
+  temperature: '--',
+  humidity: '--',
+  moisture: '--',
+  light: '--',
+};
 
-// POST endpoint to receive sensor data
 app.post('/sensordata', (req, res) => {
   const { temperature, humidity, moisture, light } = req.body;
-  latestSensorData = { temperature, humidity, moisture, light };
-  console.log('Sensor Data Received:', latestSensorData);
-  res.status(200).json({ message: 'Data received successfully' });
+
+  if (
+    typeof temperature === 'number' &&
+    typeof humidity === 'number' &&
+    typeof moisture === 'number' &&
+    typeof light === 'number'
+  ) {
+    latestSensorData = { temperature, humidity, moisture, light };
+    console.log('✅ Sensor Data Received:', latestSensorData);
+    res.status(200).json({ message: 'Data received successfully' });
+  } else {
+    console.log('❌ Invalid sensor data received:', req.body);
+    res.status(400).json({ message: 'Invalid sensor data format' });
+  }
 });
 
-// GET endpoint to serve latest sensor data
 app.get('/sensordata', (req, res) => {
   res.status(200).json(latestSensorData);
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });
