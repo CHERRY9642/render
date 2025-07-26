@@ -1,25 +1,28 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(express.json());
+app.use(cors());
+app.use(bodyParser.json());
 
-// Route to receive sensor data
+let latestSensorData = {}; // store the latest data
+
+// POST endpoint to receive sensor data
 app.post('/sensordata', (req, res) => {
-  const data = req.body;
-  console.log("Sensor Data Received:", data);
-  
-  // You can push this to Firebase or a database here
+  const { temperature, humidity, moisture, light } = req.body;
+  latestSensorData = { temperature, humidity, moisture, light };
+  console.log('Sensor Data Received:', latestSensorData);
   res.status(200).json({ message: 'Data received successfully' });
 });
 
-// Optional ping route
+// GET endpoint to serve latest sensor data
 app.get('/sensordata', (req, res) => {
-  res.send("Ping OK");
+  res.status(200).json(latestSensorData);
 });
 
-// Start server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
