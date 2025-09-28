@@ -15,6 +15,22 @@ let latestSensorData = {
   light: '--',
 };
 
+// Function to generate random sensor data
+function generateRandomSensorData() {
+  return {
+    temperature: parseFloat((Math.random() * 40).toFixed(2)), // 0 to 40 °C
+    humidity: parseFloat((Math.random() * 100).toFixed(2)),   // 0 to 100 %
+    moisture: parseFloat((Math.random() * 100).toFixed(2)),   // 0 to 100 %
+    light: parseFloat((Math.random() * 1000).toFixed(2)),     // 0 to 1000 lux
+  };
+}
+
+// Periodically update latestSensorData with random values every 5 seconds
+setInterval(() => {
+  latestSensorData = generateRandomSensorData();
+  console.log('🔄 Sensor Data Updated:', latestSensorData);
+}, 5000);
+
 app.post('/sensordata', (req, res) => {
   const { temperature, humidity, moisture, light } = req.body;
 
